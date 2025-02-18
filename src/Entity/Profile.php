@@ -51,6 +51,11 @@ class Profile
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
+
+    #[Groups(['user:read', 'profile:read'])]
+    #[ORM\OneToOne(mappedBy: 'ofProfile', cascade: ['persist', 'remove'])]
+    private ?Tracking $tracking = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -160,6 +165,30 @@ class Profile
     public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getAge(){
+        $today = new \DateTime();
+        $interval = $this->birthDate->diff($today);
+
+        return $interval->y;
+    }
+
+    public function getTracking(): ?Tracking
+    {
+        return $this->tracking;
+    }
+
+    public function setTracking(Tracking $tracking): static
+    {
+        // set the owning side of the relation if necessary
+        if ($tracking->getOfProdile() !== $this) {
+            $tracking->setOfProdile($this);
+        }
+
+        $this->tracking = $tracking;
 
         return $this;
     }

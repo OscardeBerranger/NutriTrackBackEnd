@@ -18,8 +18,10 @@ class ProfileController extends AbstractController
     public function whoAmI(){
         return $this->json($this->getUser(), Response::HTTP_OK, [], ['groups' => ['user:read']]);
     }
-    #[Route('/api/profile/edit/{id}', name: 'app_profile_edit')]
-    public function edit(Profile $profile, SerializerInterface $serializer, Request $request, EntityManagerInterface $manager, GenderRepository $genderRepository): Response{
+
+    #[Route('/api/profile/edit', name: 'app_profile_edit')]
+    public function edit(SerializerInterface $serializer, Request $request, EntityManagerInterface $manager, GenderRepository $genderRepository): Response{
+        $profile = $this->getUser()->getProfile();
         if ($profile->getOfUser() !== $this->getUser()){
             return $this->json("You are not allowed to edit this profile", Response::HTTP_FORBIDDEN);
         }

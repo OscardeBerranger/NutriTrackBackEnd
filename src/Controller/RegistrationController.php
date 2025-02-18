@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Profile;
+use App\Entity\Tracking;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
 use App\Repository\GenderRepository;
@@ -39,7 +40,13 @@ class RegistrationController extends AbstractController
             $currentDate = new \DateTimeImmutable();
             $profile->setCreatedAt($currentDate);
             $manager->persist($profile);
+            $tracking = new Tracking();
+            $tracking->setConsumedCalories(0);
+            $tracking->setDate($currentDate);
+            $tracking->setOfProfile($profile);
+            $manager->persist($tracking);
             $manager->flush();
+
             return $this->json($user, 200,[], ['groups'=>'user:read']);
         }
         return $this->json('User already exist !', 400);
