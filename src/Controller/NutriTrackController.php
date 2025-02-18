@@ -40,9 +40,27 @@ class NutriTrackController extends AbstractController
         $trackingDate = $tracking->getDate();
         if ($today->format("Y-m-d") != $trackingDate->format("Y-m-d")) {
             $tracking->setConsumedCalories(0);
+            $tracking->setDate($today);
+            $manager->flush();
         }
         $tracking->setConsumedCalories($tracking->getConsumedCalories() + $calories);
         $manager->flush();
         return $this->json($tracking->getConsumedCalories(), Response::HTTP_OK);
+    }
+
+    #[Route('/api/calories/get', name: 'app_get_calories')]
+    public function getRemainingCalories(NutriTrackService $service): Response{
+        $today = new \DateTime();
+        $userProfile = $this->getUser()->getProfile();
+        if (!$userProfile){
+            return $this->json("Error profile not found", Response::HTTP_BAD_REQUEST);
+        }
+        $calories = $service->calcul_calories($userProfile->getGender()->getGender(), $userProfile->getWeight(), $userProfile->getHeight(), $userProfile->getAge(), $userProfile->getSportFrequecy());
+        $tracking = $userProfile->getTracking();
+        if ($today->format("Y-m-d") != $tracking->getDate()->format("Y-m-d")) {
+            $tracking->setConsumedCalories(0);
+            $tracking = $userProfile->getTracking();
+        }
+        return $this->json($calories - $tracking->getConsumedCalories(), Response::HTTP_OK);
     }
 }
