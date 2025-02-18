@@ -1,0 +1,166 @@
+<?php
+
+namespace App\Entity;
+
+use App\Repository\ProfileRepository;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
+
+#[ORM\Entity(repositoryClass: ProfileRepository::class)]
+class Profile
+{
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    #[Groups(['user:read', 'profile:read'])]
+    private ?int $id = null;
+
+    #[ORM\OneToOne(inversedBy: 'profile', cascade: ['persist', 'remove'])]
+    private ?User $ofUser = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['user:read', 'profile:read'])]
+    private ?string $name = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['user:read', 'profile:read'])]
+    private ?string $surname = null;
+
+    #[ORM\Column(nullable: true)]
+    #[Groups(['user:read', 'profile:read'])]
+    private ?int $height = null;
+
+    #[ORM\Column(nullable: true)]
+    #[Groups(['user:read', 'profile:read'])]
+    private ?int $weight = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Groups(['user:read', 'profile:read'])]
+    private ?\DateTimeInterface $birthDate = null;
+
+    #[ORM\Column(nullable: true)]
+    #[Groups(['user:read', 'profile:read'])]
+    private ?float $sportFrequecy = null;
+
+
+    #[Groups(['user:read', 'profile:read'])]
+    #[ORM\ManyToOne(inversedBy: 'profiles')]
+    private ?Gender $gender = null;
+
+    #[ORM\Column]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getOfUser(): ?User
+    {
+        return $this->ofUser;
+    }
+
+    public function setOfUser(?User $ofUser): static
+    {
+        $this->ofUser = $ofUser;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): static
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getSurname(): ?string
+    {
+        return $this->surname;
+    }
+
+    public function setSurname(?string $surname): static
+    {
+        $this->surname = $surname;
+
+        return $this;
+    }
+
+    public function getHeight(): ?int
+    {
+        return $this->height;
+    }
+
+    public function setHeight(?int $height): static
+    {
+        $this->height = $height;
+
+        return $this;
+    }
+
+    public function getWeight(): ?int
+    {
+        return $this->weight;
+    }
+
+    public function setWeight(?int $weight): static
+    {
+        $this->weight = $weight;
+
+        return $this;
+    }
+
+    public function getBirthDate(): ?\DateTimeInterface
+    {
+        return $this->birthDate;
+    }
+
+    public function setBirthDate(?\DateTimeInterface $birthDate): static
+    {
+        $this->birthDate = $birthDate;
+
+        return $this;
+    }
+
+    public function getSportFrequecy(): ?float
+    {
+        return $this->sportFrequecy;
+    }
+
+    public function setSportFrequecy(?float $sportFrequecy): static
+    {
+        $this->sportFrequecy = $sportFrequecy;
+
+        return $this;
+    }
+
+    public function getGender(): ?Gender
+    {
+        return $this->gender;
+    }
+
+    public function setGender(?Gender $gender): static
+    {
+        $this->gender = $gender;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+}
