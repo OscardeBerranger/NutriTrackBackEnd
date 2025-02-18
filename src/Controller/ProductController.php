@@ -60,4 +60,11 @@ class ProductController extends AbstractController
         $manager->flush();
         return $this->json($product, Response::HTTP_OK, [], ['groups' => 'product:read']);
     }
+
+    #[Route('/api/product/delete/{id}', name: 'app_product_delete', methods: ['DELETE'])]
+    public function delete(Product $product, SerializerInterface $serializer, EntityManagerInterface $manager): Response{
+        $manager->remove($product);
+        $manager->flush();
+        return $this->json("Product removed", Response::HTTP_OK);
+    }
 }

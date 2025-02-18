@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Ingredient;
+use App\Entity\Product;
 use App\Repository\IngredientRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,5 +21,13 @@ class IngredientController extends AbstractController
         $manager->persist($ingredient);
         $manager->flush();
         return $this->json($ingredient, Response::HTTP_CREATED);
+    }
+
+
+    #[Route('/api/ingredient/edit/{id}', name: 'app_ingredient_create', methods: ['POST'])]
+    public function edit(Ingredient $ingredient, SerializerInterface $serializer, Request $request, EntityManagerInterface $manager): Response{
+        $serializer->deserialize($request->getContent(), Ingredient::class, 'json', ['object_to_populate'=>$ingredient]);
+        $manager->flush();
+        return $this->json($ingredient, Response::HTTP_OK, [], ['groups' => 'product:read']);
     }
 }
