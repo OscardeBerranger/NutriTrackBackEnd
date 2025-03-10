@@ -64,12 +64,13 @@ class Profile
     /**
      * @var Collection<int, Address>
      */
-    #[ORM\OneToMany(targetEntity: Address::class, mappedBy: 'ofProfile', orphanRemoval: true)]
-    private Collection $addresses;
+    #[ORM\ManyToMany(targetEntity: Address::class)]
+    #[Groups(['profile:read'])]
+    private Collection $address;
 
     public function __construct()
     {
-        $this->addresses = new ArrayCollection();
+        $this->address = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -224,16 +225,15 @@ class Profile
     /**
      * @return Collection<int, Address>
      */
-    public function getAddresses(): Collection
+    public function getAddress(): Collection
     {
-        return $this->addresses;
+        return $this->address;
     }
 
     public function addAddress(Address $address): static
     {
-        if (!$this->addresses->contains($address)) {
-            $this->addresses->add($address);
-            $address->setOfProfile($this);
+        if (!$this->address->contains($address)) {
+            $this->address->add($address);
         }
 
         return $this;
@@ -241,12 +241,7 @@ class Profile
 
     public function removeAddress(Address $address): static
     {
-        if ($this->addresses->removeElement($address)) {
-            // set the owning side to null (unless already changed)
-            if ($address->getOfProfile() === $this) {
-                $address->setOfProfile(null);
-            }
-        }
+        $this->address->removeElement($address);
 
         return $this;
     }
