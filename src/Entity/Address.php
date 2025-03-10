@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\AddressRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: AddressRepository::class)]
 class Address
@@ -11,27 +12,31 @@ class Address
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['address:read'])]
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Groups(['address:read'])]
     private ?int $streetNumber = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['address:read'])]
     private ?string $street = null;
 
     #[ORM\Column]
+    #[Groups(['address:read'])]
     private ?int $zipcode = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['address:read'])]
     private ?string $city = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['address:read'])]
     private ?string $country = null;
 
-    #[ORM\ManyToOne(inversedBy: 'addresses')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Profile $ofProfile = null;
-
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $flatInfo = null;
 
     public function getId(): ?int
     {
@@ -98,16 +103,15 @@ class Address
         return $this;
     }
 
-    public function getOfProfile(): ?Profile
+    public function getFlatInfo(): ?string
     {
-        return $this->ofProfile;
+        return $this->flatInfo;
     }
 
-    public function setOfProfile(?Profile $ofProfile): static
+    public function setFlatInfo(?string $flatInfo): static
     {
-        $this->ofProfile = $ofProfile;
+        $this->flatInfo = $flatInfo;
 
         return $this;
     }
-
 }
