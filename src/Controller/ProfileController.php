@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Ingredient;
 use App\Entity\Profile;
 use App\Repository\GenderRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,7 +16,7 @@ class ProfileController extends AbstractController
 {
 
     #[Route('/api/whoami', name: 'whoami')]
-    public function whoAmI(){
+    public function whoAmI(Request $request){
         return $this->json($this->getUser(), Response::HTTP_OK, [], ['groups' => ['user:read']]);
     }
 
@@ -33,5 +34,18 @@ class ProfileController extends AbstractController
         }
         $manager->flush();
         return $this->json($tempProfile, Response::HTTP_OK, [], ['groups' => 'profile:read']);
+    }
+
+    #[Route('/api/profile/alergies/add/{id}')]
+    public function addAllergies(Ingredient $ingredient, Request $request, EntityManagerInterface $manager): Response{
+        $this->getUser()->getProfile()->addAlergy($ingredient);
+        $manager->flush();
+        return $this->json("Alergie added", Response::HTTP_OK);
+    }
+    #[Route('/api/profile/alergies/add/{id}')]
+    public function removeAllergie(Ingredient $ingredient, Request $request, EntityManagerInterface $manager): Response{
+        $this->getUser()->getProfile()->removeAllergy($ingredient);
+        $manager->flush();
+        return $this->json("Alergie added", Response::HTTP_OK);
     }
 }

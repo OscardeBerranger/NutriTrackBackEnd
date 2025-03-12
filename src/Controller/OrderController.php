@@ -15,4 +15,9 @@ class OrderController extends AbstractController
             'controller_name' => 'OrderController',
         ]);
     }
+
+    #[Route('/api/order/place', methods: ['POST'])]
+    public function placeOrder(Request $request){
+
+    }
 }

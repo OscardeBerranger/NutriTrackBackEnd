@@ -68,9 +68,16 @@ class Profile
     #[Groups(['profile:read'])]
     private Collection $address;
 
+    /**
+     * @var Collection<int, Ingredient>
+     */
+    #[ORM\ManyToMany(targetEntity: Ingredient::class)]
+    private Collection $allergies;
+
     public function __construct()
     {
         $this->address = new ArrayCollection();
+        $this->allergies = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -242,6 +249,30 @@ class Profile
     public function removeAddress(Address $address): static
     {
         $this->address->removeElement($address);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Ingredient>
+     */
+    public function getAllergies(): Collection
+    {
+        return $this->allergies;
+    }
+
+    public function addAllergy(Ingredient $allergy): static
+    {
+        if (!$this->allergies->contains($allergy)) {
+            $this->allergies->add($allergy);
+        }
+
+        return $this;
+    }
+
+    public function removeAllergy(Ingredient $allergy): static
+    {
+        $this->allergies->removeElement($allergy);
 
         return $this;
     }

@@ -36,6 +36,10 @@ class Product
     #[Groups("product:read")]
     private ?string $name = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups("product:read")]
+    private ?string $origin = null;
+
     public function __construct()
     {
         $this->ingredients = new ArrayCollection();
@@ -102,6 +106,18 @@ class Product
     public function setName(string $name): static
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getOrigin(): ?string
+    {
+        return $this->origin;
+    }
+
+    public function setOrigin(?string $origin): static
+    {
+        $this->origin = $origin;
 
         return $this;
     }
