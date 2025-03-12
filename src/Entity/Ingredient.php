@@ -14,7 +14,7 @@ class Ingredient
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups("product:read")]
+    #[Groups(["product:read", "order:read"])]
     private ?int $id = null;
 
     /**
@@ -24,7 +24,7 @@ class Ingredient
     private Collection $products;
 
     #[ORM\Column(length: 255)]
-    #[Groups("product:read")]
+    #[Groups(["product:read", "order:read"])]
     private ?string $name = null;
 
     public function __construct()

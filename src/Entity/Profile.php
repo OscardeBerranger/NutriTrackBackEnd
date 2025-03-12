@@ -15,18 +15,19 @@ class Profile
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['user:read', 'profile:read'])]
+    #[Groups(['user:read', 'profile:read', "order:read"])]
     private ?int $id = null;
 
     #[ORM\OneToOne(inversedBy: 'profile', cascade: ['persist', 'remove'])]
+    #[Groups(["order:read"])]
     private ?User $ofUser = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:read', 'profile:read'])]
+    #[Groups(['user:read', 'profile:read', "order:read"])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:read', 'profile:read'])]
+    #[Groups(['user:read', 'profile:read', "order:read"])]
     private ?string $surname = null;
 
     #[ORM\Column(nullable: true)]
@@ -74,10 +75,17 @@ class Profile
     #[ORM\ManyToMany(targetEntity: Ingredient::class)]
     private Collection $allergies;
 
+    /**
+     * @var Collection<int, Order>
+     */
+    #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'ofProfile')]
+    private Collection $orders;
+
     public function __construct()
     {
         $this->address = new ArrayCollection();
         $this->allergies = new ArrayCollection();
+        $this->orders = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -273,6 +281,36 @@ class Profile
     public function removeAllergy(Ingredient $allergy): static
     {
         $this->allergies->removeElement($allergy);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Order>
+     */
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function addOrder(Order $order): static
+    {
+        if (!$this->orders->contains($order)) {
+            $this->orders->add($order);
+            $order->setOfProfile($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrder(Order $order): static
+    {
+        if ($this->orders->removeElement($order)) {
+            // set the owning side to null (unless already changed)
+            if ($order->getOfProfile() === $this) {
+                $order->setOfProfile(null);
+            }
+        }
 
         return $this;
     }

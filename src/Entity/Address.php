@@ -16,23 +16,23 @@ class Address
     private ?int $id = null;
 
     #[ORM\Column]
-    #[Groups(['address:read'])]
+    #[Groups(['address:read', 'product:read'])]
     private ?int $streetNumber = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['address:read'])]
+    #[Groups(['address:read', 'product:read'])]
     private ?string $street = null;
 
     #[ORM\Column]
-    #[Groups(['address:read'])]
+    #[Groups(['address:read', 'product:read'])]
     private ?int $zipcode = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['address:read'])]
+    #[Groups(['address:read', 'product:read'])]
     private ?string $city = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['address:read'])]
+    #[Groups(['address:read', 'product:read'])]
     private ?string $country = null;
 
     #[ORM\Column(length: 255, nullable: true)]

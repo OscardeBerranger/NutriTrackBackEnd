@@ -4,7 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Ingredient;
 use App\Entity\Product;
+use App\Entity\Restaurant;
 use App\Repository\IngredientRepository;
+use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,15 +18,27 @@ use Symfony\Component\Serializer\SerializerInterface;
 class ProductController extends AbstractController
 {
 
+    #[Route('/api/product/all', name: 'app_product_get_all', methods: ['GET'])]
+    public function index(ProductRepository $productRepository): Response
+    {
+        return $this->json($productRepository->findAll(), Response::HTTP_OK, [], ["groups" => ["product:read"]]);
+    }
     #[Route('/api/product/get/{id}', name: 'app_product_get', methods: ['GET'])]
     public function get(Product $product): Response{
         return $this->json($product, Response::HTTP_OK, [], ['groups' => 'product:read']);
     }
 
-    #[Route('/api/product/create', name: 'app_product_create', methods: ['POST'])]
-    public function create(Request $request, SerializerInterface $serializer, IngredientRepository $ingredientRepository, EntityManagerInterface $manager): Response
+    #[Route('/api/product/create/{id}', name: 'app_product_create', methods: ['POST'])]
+    public function create(Request $request,Restaurant $restaurant, SerializerInterface $serializer, IngredientRepository $ingredientRepository, EntityManagerInterface $manager): Response
     {
+        /**
+         * A METTRE LORSQU'IL Y AURA OWNER
+        */
+//        if ($this->getUser() !== $restaurant->getOwner()){
+//            return $this->json(null, Response::HTTP_FORBIDDEN);
+//        }
         $product = $serializer->deserialize($request->getContent(), Product::class, 'json');
+        $product->setRestaurant($restaurant);
         $ingredients_ids = $request->getPayload()->all('ingredients_ids');
         foreach ($ingredients_ids as $id) {
             $ingredient = $ingredientRepository->findOneBy(["id" => $id]);
@@ -34,7 +48,7 @@ class ProductController extends AbstractController
         }
         $manager->persist($product);
         $manager->flush();
-        return $this->json($product, Response::HTTP_CREATED, [], ["groups"=>"product:read"]);
+        return $this->json($product, Response::HTTP_CREATED, [], ["groups"=>"product:read", "address:read"]);
     }
 
     #[Route('/api/product/edit/{id}', name: 'app_product_edit', methods: ['POST'])]

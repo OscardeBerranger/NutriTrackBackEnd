@@ -14,31 +14,36 @@ class Product
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups("product:read")]
+    #[Groups(["product:read", "order:read"])]
     private ?int $id = null;
 
     /**
      * @var Collection<int, Ingredient>
      */
     #[ORM\ManyToMany(targetEntity: Ingredient::class, inversedBy: 'products')]
-    #[Groups("product:read")]
+    #[Groups(["product:read"])]
     private Collection $ingredients;
 
     #[ORM\Column]
-    #[Groups("product:read")]
+    #[Groups(["product:read"])]
     private ?float $calories = null;
 
     #[ORM\Column]
-    #[Groups("product:read")]
+    #[Groups(["product:read", "order:read"])]
     private ?float $price = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups("product:read")]
+    #[Groups(["product:read", "order:read"])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups("product:read")]
+    #[Groups(["product:read"])]
     private ?string $origin = null;
+
+    #[ORM\ManyToOne(inversedBy: 'products')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["product:read", "order:read"])]
+    private ?Restaurant $restaurant = null;
 
     public function __construct()
     {
@@ -118,6 +123,18 @@ class Product
     public function setOrigin(?string $origin): static
     {
         $this->origin = $origin;
+
+        return $this;
+    }
+
+    public function getRestaurant(): ?Restaurant
+    {
+        return $this->restaurant;
+    }
+
+    public function setRestaurant(?Restaurant $restaurant): static
+    {
+        $this->restaurant = $restaurant;
 
         return $this;
     }

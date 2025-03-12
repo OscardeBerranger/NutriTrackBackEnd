@@ -24,7 +24,7 @@ class IngredientController extends AbstractController
     }
 
 
-    #[Route('/api/ingredient/edit/{id}', name: 'app_ingredient_create', methods: ['POST'])]
+    #[Route('/api/ingredient/edit/{id}', name: 'app_ingredient_edit', methods: ['POST'])]
     public function edit(Ingredient $ingredient, SerializerInterface $serializer, Request $request, EntityManagerInterface $manager): Response{
         $serializer->deserialize($request->getContent(), Ingredient::class, 'json', ['object_to_populate'=>$ingredient]);
         $manager->flush();
